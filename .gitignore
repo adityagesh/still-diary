@@ -1,0 +1,22 @@
+node_modules/
+dist/
+dist-electron/
+release/
+test-results/
+playwright-report/
+*.log
+.DS_Store
+.env
+.env.*
+!.env.example
+
+# Personal diary data belongs in a separate private repository.
+diary.json
+*.entry
+*.asset
+/entries/
+/assets/
+*.pem
+*.key
+*.p12
+*.pfx

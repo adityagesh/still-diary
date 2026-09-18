@@ -1,0 +1,68 @@
+{
+  "name": "still-diary",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A local-first, encrypted personal diary with private GitHub sync.",
+  "author": {
+    "name": "Still Diary contributors",
+    "email": "26188281+adityagesh@users.noreply.github.com"
+  },
+  "repository": { "type": "git", "url": "https://github.com/adityagesh/still-diary.git" },
+  "homepage": "https://github.com/adityagesh/still-diary",
+  "bugs": { "url": "https://github.com/adityagesh/still-diary/issues" },
+  "license": "MIT",
+  "main": "dist-electron/electron/main.js",
+  "scripts": {
+    "dev": "npm run build:electron && concurrently -k \"vite --host 127.0.0.1\" \"wait-on http://127.0.0.1:5173 && cross-env ELECTRON_DEV=1 electron .\"",
+    "build:electron": "tsc -p tsconfig.electron.json",
+    "build": "npm run typecheck && vite build && npm run build:electron",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.electron.json",
+    "test": "vitest run",
+    "test:e2e": "npm run build && playwright test",
+    "check:source": "node scripts/check-source.mjs",
+    "start": "electron .",
+    "pack": "npm run build && electron-builder --dir",
+    "package:win": "npm run build && electron-builder --win portable --x64 --publish never",
+    "package:linux": "npm run build && electron-builder --linux AppImage deb --x64 --publish never"
+  },
+  "dependencies": {
+    "@tiptap/extension-image": "^3.31.3",
+    "@tiptap/extension-text-style": "^3.31.3",
+    "@tiptap/react": "^3.31.3",
+    "@tiptap/starter-kit": "^3.31.3",
+    "lucide-react": "^0.577.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^5.1.0",
+    "concurrently": "^9.2.0",
+    "cross-env": "^10.1.0",
+    "electron": "^41.0.0",
+    "electron-builder": "^26.0.12",
+    "typescript": "^5.9.3",
+    "vite": "^8.0.0",
+    "vitest": "^4.0.0",
+    "wait-on": "^9.0.0"
+  },
+  "build": {
+    "appId": "org.stilldiary.desktop",
+    "productName": "Still Diary",
+    "directories": { "output": "release" },
+    "files": ["dist/**/*", "dist-electron/**/*", "package.json", "LICENSE"],
+    "asar": true,
+    "win": { "target": "portable", "signAndEditExecutable": false },
+    "portable": { "artifactName": "Still-Diary-${version}-Windows-${arch}.exe" },
+    "mac": { "target": "dmg" },
+    "linux": {
+      "target": ["AppImage", "deb"],
+      "category": "Office",
+      "executableName": "still-diary",
+      "artifactName": "Still-Diary-${version}-Linux-${arch}.${ext}"
+    }
+  }
+}

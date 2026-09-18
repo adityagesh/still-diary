@@ -1,0 +1,125 @@
+name: CI and release
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
+
+jobs:
+  build:
+    name: Build and test (${{ matrix.platform }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            platform: windows-x64
+            package-command: npx electron-builder --win portable --x64 --publish never
+          - os: ubuntu-22.04
+            platform: linux-x64
+            package-command: npx electron-builder --linux AppImage deb --x64 --publish never
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Reject personal diary data in the app repository
+        run: npm run check:source
+      - name: Install Linux desktop dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends xvfb libgtk-3-0 libnss3 libasound2 libgbm1 libxss1 libfuse2 fakeroot
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Unit and local Git integration tests
+        run: npm test
+      - name: Typecheck and build
+        run: npm run build
+      - name: Desktop workflows on Windows
+        if: runner.os == 'Windows'
+        run: npx playwright test
+      - name: Desktop workflows on Linux
+        if: runner.os == 'Linux'
+        run: xvfb-run --auto-servernum npx playwright test
+      - name: Package desktop app
+        run: ${{ matrix.package-command }}
+      - name: Upload release candidates
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: still-${{ matrix.platform }}
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
+          path: |
+            release/Still-Diary-*-Windows-x64.exe
+            release/Still-Diary-*-Linux-x64.AppImage
+            release/Still-Diary-*-Linux-x64.deb
+      - name: Upload failure diagnostics
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: diagnostics-${{ matrix.platform }}
+          if-no-files-found: ignore
+          retention-days: 7
+          path: test-results/
+
+  release:
+    name: Publish Windows and Linux release
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Check out tagged source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24'
+      - name: Download tested release candidates
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          pattern: still-*-x64
+          merge-multiple: true
+          path: artifacts
+      - name: Validate version and generate SHA-256 checksums
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: node scripts/prepare-release.mjs "$RELEASE_TAG" artifacts
+      - name: Publish the complete release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          flags=()
+          if [[ "$RELEASE_TAG" == *-* ]]; then flags+=(--prerelease); fi
+          gh release create "$RELEASE_TAG" \
+            artifacts/*.exe artifacts/*.AppImage artifacts/*.deb artifacts/SHA256SUMS.txt \
+            --repo "$GITHUB_REPOSITORY" --verify-tag --draft \
+            --title "Still Diary $RELEASE_TAG" --notes-file "$RUNNER_TEMP/still-release-notes.md" \
+            "${flags[@]}"
+          gh release edit "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --draft=false
