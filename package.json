@@ -7,9 +7,14 @@
     "name": "Still Diary contributors",
     "email": "26188281+adityagesh@users.noreply.github.com"
   },
-  "repository": { "type": "git", "url": "https://github.com/adityagesh/still-diary.git" },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adityagesh/still-diary.git"
+  },
   "homepage": "https://github.com/adityagesh/still-diary",
-  "bugs": { "url": "https://github.com/adityagesh/still-diary/issues" },
+  "bugs": {
+    "url": "https://github.com/adityagesh/still-diary/issues"
+  },
   "license": "MIT",
   "main": "dist-electron/electron/main.js",
   "scripts": {
@@ -26,6 +31,7 @@
     "package:linux": "npm run build && electron-builder --linux AppImage deb --x64 --publish never"
   },
   "dependencies": {
+    "@floating-ui/dom": "^1.8.0",
     "@tiptap/extension-image": "^3.31.3",
     "@tiptap/extension-text-style": "^3.31.3",
     "@tiptap/react": "^3.31.3",
@@ -52,14 +58,31 @@
   "build": {
     "appId": "org.stilldiary.desktop",
     "productName": "Still Diary",
-    "directories": { "output": "release" },
-    "files": ["dist/**/*", "dist-electron/**/*", "package.json", "LICENSE"],
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "dist-electron/**/*",
+      "package.json",
+      "LICENSE"
+    ],
     "asar": true,
-    "win": { "target": "portable", "signAndEditExecutable": false },
-    "portable": { "artifactName": "Still-Diary-${version}-Windows-${arch}.exe" },
-    "mac": { "target": "dmg" },
+    "win": {
+      "target": "portable",
+      "signAndEditExecutable": false
+    },
+    "portable": {
+      "artifactName": "Still-Diary-${version}-Windows-${arch}.exe"
+    },
+    "mac": {
+      "target": "dmg"
+    },
     "linux": {
-      "target": ["AppImage", "deb"],
+      "target": [
+        "AppImage",
+        "deb"
+      ],
       "category": "Office",
       "executableName": "still-diary",
       "artifactName": "Still-Diary-${version}-Linux-${arch}.${ext}"
