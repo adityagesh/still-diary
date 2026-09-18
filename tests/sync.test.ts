@@ -49,7 +49,7 @@ async function windowsShortPath(directory: string): Promise<string> {
     '$fs = New-Object -ComObject Scripting.FileSystemObject; $fs.GetFolder($env:STILL_DIARY_ALIAS_TEST).ShortPath'], {
     cwd: process.cwd(),
     env: { ...process.env, STILL_DIARY_ALIAS_TEST: directory },
-    timeout: 5_000,
+    timeout: 15_000,
     maxBuffer: 16 * 1024,
   });
   if (result.code !== 0) throw new Error('Could not resolve Windows short path for the alias regression.');

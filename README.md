@@ -4,6 +4,14 @@
 
 A quiet, local-first diary for Windows and Linux. Write offline, autosave locally, and optionally back up encrypted entries and images to your own **separate private GitHub repository**.
 
+## Why Still?
+
+- **Free private storage.** Back up to a private repository on GitHub Free, with no Still subscription. [GitHub's usage limits apply](docs/README.md#cost-and-github-protections).
+- **Private before it leaves your device.** Entries and images are encrypted locally, before they reach GitHub.
+- **Your account, your control.** Use GitHub's private-repository access controls and protect your account with two-factor authentication.
+- **Write anywhere, even offline.** Automatic local saves, rich text, images, and a quiet night theme.
+- **Open source. Your keys. Your data.** No hosted diary service, analytics, or hidden recovery access.
+
 ![Still Diary in night mode, showing the entry list, rich-text editor, and local-save status. All content shown is sample data.](docs/images/still-diary-night.png)
 
 ## Install
@@ -13,8 +21,8 @@ A quiet, local-first diary for Windows and Linux. Write offline, autosave locall
 | Platform | Download v0.1.0 | Get started |
 | --- | --- | --- |
 | Windows, x64 | [Portable app](https://github.com/adityagesh/still-diary/releases/download/v0.1.0/Still-Diary-0.1.0-Windows-x64.exe) | Download and open the `.exe`. |
-| Ubuntu / Debian, x64 | [Debian package](https://github.com/adityagesh/still-diary/releases/download/v0.1.0/Still-Diary-0.1.0-Linux-x64.deb) | Open the `.deb` with your software installer. |
-| Linux, x64 | [AppImage](https://github.com/adityagesh/still-diary/releases/download/v0.1.0/Still-Diary-0.1.0-Linux-x64.AppImage) | Make it executable, then open it. |
+| Ubuntu / Debian, x64 | [Debian package](https://github.com/adityagesh/still-diary/releases/download/v0.1.0/Still-Diary-0.1.0-Linux-amd64.deb) | Open the `.deb` with your software installer. |
+| Linux, x64 | [AppImage](https://github.com/adityagesh/still-diary/releases/download/v0.1.0/Still-Diary-0.1.0-Linux-x86_64.AppImage) | Make it executable, then open it. |
 
 Builds are currently unsigned. [Installation commands, checksums, and troubleshooting](docs/README.md#install-from-a-release).
 

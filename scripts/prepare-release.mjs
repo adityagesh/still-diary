@@ -11,8 +11,8 @@ export async function prepareRelease(directory, version, tag) {
   }
   const files = [
     `Still-Diary-${version}-Windows-x64.exe`,
-    `Still-Diary-${version}-Linux-x64.AppImage`,
-    `Still-Diary-${version}-Linux-x64.deb`,
+    `Still-Diary-${version}-Linux-x86_64.AppImage`,
+    `Still-Diary-${version}-Linux-amd64.deb`,
   ];
   const unexpected = (await readdir(directory)).filter((name) => !files.includes(name) && name !== 'SHA256SUMS.txt');
   if (unexpected.length) throw new Error(`Unexpected release files: ${unexpected.join(', ')}`);

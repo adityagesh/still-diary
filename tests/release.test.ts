@@ -6,7 +6,7 @@ import path from 'node:path';
 import { prepareRelease } from '../scripts/prepare-release.mjs';
 
 const directories: string[] = [];
-const names = ['Still-Diary-0.1.0-Windows-x64.exe', 'Still-Diary-0.1.0-Linux-x64.AppImage', 'Still-Diary-0.1.0-Linux-x64.deb'];
+const names = ['Still-Diary-0.1.0-Windows-x64.exe', 'Still-Diary-0.1.0-Linux-x86_64.AppImage', 'Still-Diary-0.1.0-Linux-amd64.deb'];
 
 async function fixture() {
   const directory = await mkdtemp(path.join(os.tmpdir(), 'still-release-test-'));

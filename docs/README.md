@@ -6,6 +6,7 @@
 - [Build from source](#build-from-source)
 - [Writing and settings](#first-use)
 - [Private GitHub backup](#connect-github-using-ssh)
+- [Cost and GitHub protections](#cost-and-github-protections)
 - [Sync conflicts](#concurrent-edits-and-conflicts)
 - [Privacy and recovery](#recovery-and-privacy)
 - [Encrypted file format and configuration](#repository-schema)
@@ -27,8 +28,8 @@ The layout has dated entries on the left, an optional title and rich-text page o
 | Platform | Download v0.1.0 | Installation |
 | --- | --- | --- |
 | Windows 10/11, x64 | [Portable `.exe`](https://github.com/adityagesh/still-diary/releases/download/v0.1.0/Still-Diary-0.1.0-Windows-x64.exe) | Download and open the executable. No installer is needed. |
-| Ubuntu/Debian Linux, x64 | [Installable `.deb`](https://github.com/adityagesh/still-diary/releases/download/v0.1.0/Still-Diary-0.1.0-Linux-x64.deb) | Open it with your software installer, or use the command below. |
-| Linux, x64 | [Portable `.AppImage`](https://github.com/adityagesh/still-diary/releases/download/v0.1.0/Still-Diary-0.1.0-Linux-x64.AppImage) | Make it executable, then run it as described below. |
+| Ubuntu/Debian Linux, x64 | [Installable `.deb`](https://github.com/adityagesh/still-diary/releases/download/v0.1.0/Still-Diary-0.1.0-Linux-amd64.deb) | Open it with your software installer, or use the command below. |
+| Linux, x64 | [Portable `.AppImage`](https://github.com/adityagesh/still-diary/releases/download/v0.1.0/Still-Diary-0.1.0-Linux-x86_64.AppImage) | Make it executable, then run it as described below. |
 
 The diary stays in the separate folder you select, not inside the executable or installation directory. Updating the app does not require creating a new diary.
 
@@ -38,15 +39,15 @@ The diary stays in the separate folder you select, not inside the executable or 
 Ubuntu/Debian, from the folder containing the download:
 
 ```bash
-sudo apt install ./Still-Diary-0.1.0-Linux-x64.deb
+sudo apt install ./Still-Diary-0.1.0-Linux-amd64.deb
 still-diary
 ```
 
 For the portable AppImage:
 
 ```bash
-chmod +x Still-Diary-0.1.0-Linux-x64.AppImage
-./Still-Diary-0.1.0-Linux-x64.AppImage
+chmod +x Still-Diary-0.1.0-Linux-x86_64.AppImage
+./Still-Diary-0.1.0-Linux-x86_64.AppImage
 ```
 
 Run as your normal user, not root. If your distribution reports a missing `libfuse.so.2`, install its FUSE 2 compatibility package (for example, `libfuse2` on Ubuntu 22.04 or `libfuse2t64` on Ubuntu 24.04), or use the `.deb` on a supported distribution. Chromium sandbox support must be available; do not disable the app's sandbox to work around an unsupported environment.
@@ -150,6 +151,14 @@ The lock button saves and locks the diary. Each launch requires sign-in. Keep th
 ## Connect GitHub using SSH
 
 The app provides these commands in **Settings & GitHub**, with fields for your repository owner and name. Run them yourself; Still does not create accounts, repositories, keys or permissions automatically.
+
+### Cost and GitHub protections
+
+Still has no subscription or storage fee. [GitHub Free includes private repositories](https://docs.github.com/en/get-started/learning-about-github/githubs-plans), so ordinary diary storage does not require a paid GitHub plan. Still uses regular Git; Git LFS, Actions, Packages and Codespaces are not required for your private diary repository.
+
+This is not unlimited storage: GitHub's [file-size and repository-health limits](https://docs.github.com/en/repositories/working-with-files/managing-large-files/about-large-files-on-github), terms and plan policies apply. GitHub blocks regular Git files above 100 MiB and recommends keeping repositories small. Encryption and Git history increase storage use, so this is not a replacement for a large photo archive. Optional GitHub products can have separate quotas or charges.
+
+Your private repository benefits from GitHub's repository access controls and account-security features, such as two-factor authentication. Enable 2FA and protect your SSH credentials. Features vary by plan: this does **not** mean every paid GitHub security feature is included or that GitHub can inspect encrypted diary contents. Still's local encryption adds a separate layer of content protection; neither GitHub account recovery nor its security features can replace your diary passphrase or emergency recovery key.
 
 ### 1. Authenticate GitHub
 
@@ -326,7 +335,7 @@ The 20 MB image upload limit is for the original file; base64 encoding and encry
 
 The app uses a ciphertext revision to reject stale writes, authenticated encryption to detect tampering and atomic file replacement for saves. Schema, dates, paths, rich-text nodes, image types and input sizes are validated. Symlink descendants and arbitrary remote assets are rejected.
 
-Local application preferences store only the diary directory, theme and sync interval in Electron's per-user application-data directory. Passwords, recovery keys and decrypted entries are not stored in preferences or browser local storage.
+Local application preferences store the diary directory, theme, sync interval and whether the setup popup has been dismissed in Electron's per-user application-data directory. Passwords, recovery keys and decrypted entries are not stored in preferences or browser local storage.
 
 Keep all other files out of the data repository. App source code and its MIT license belong in a separate repository if you choose to publish it.
 
